@@ -15,6 +15,8 @@
 #include<sys/time.h>
 #include<sys/wait.h>
 
+int continuepolling = 1;
+
 struct termios saved_attributes;
 
 void sigpipeHandler(int signum);
@@ -32,15 +34,32 @@ int main(int argc, char **argv)
 	//THIS IS NECESSARY
 
 	struct termios tattr;
-	tcgetattr(STDIN_FILENO, &saved_attributes);
-	atexit(reset_input_mode);
-	tcgetattr(STDIN_FILENO, &tattr);
+
+	if(tcgetattr(STDIN_FILENO, &saved_attributes) != 0) { 
+		fprintf(stderr, "Error in getting terminal settings: %s\n", strerror(errno));
+		exit(1);
+	}
+
+	if(atexit(reset_input_mode) != 0) { 
+		fprintf(stderr, "Error in setting exit handler to restore terminal attributes: %s\n", strerror(errno));
+		exit(1);
+	}
+
+	if(tcgetattr(STDIN_FILENO, &tattr) != 0) { 
+		fprintf(stderr, "Error in getting terminal attributes for modification: %s\n", strerror(errno));
+		exit(1);
+	}
+
 	tattr.c_iflag = ISTRIP;
 	tattr.c_oflag = 0;
 	tattr.c_lflag = 0;
 	tattr.c_cc[VMIN] = 1;
 	tattr.c_cc[VTIME] = 0;
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &tattr);
+
+	if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &tattr) != 0) { 
+		fprintf(stderr, "Error in setting terminal attributes after modification:	%s\n", strerror(errno));
+		exit(1);
+	}
 
 
 	//CODE TO PARSE ARGUMENTS
@@ -79,10 +98,23 @@ int main(int argc, char **argv)
 			}
 
 			child_pid = fork();
+			//CHECKING FOR THIS SYSTEM CALL IS DONE THROUGH AN ELSE STATEMENT
+			//IN THE CODE BLOCK BELOW
 
 			if( child_pid > 0) {
-				close(to_child_pipe[0]);
-				close(from_child_pipe[1]);
+
+				if(close(to_child_pipe[0]) != 0){ 
+
+					fprintf(stderr, "Error in system call: %s\n", strerror(errno));
+					exit(1);
+				}
+
+				if(close(from_child_pipe[1]) != 0) { 
+
+					fprintf(stderr, "Error in system call: %s\n", strerror(errno));
+					exit(1);
+
+				}
 
 
 				int bufferSize = 512;		//edit this according to preference
@@ -96,7 +128,6 @@ int main(int argc, char **argv)
 				pfds[1].fd = from_child_pipe[0];
 				pfds[1].events = POLLIN;
 
-				int continuepolling = 1;
 
 				while( poll(pfds, 2, -1) && continuepolling) {
 
@@ -122,7 +153,12 @@ int main(int argc, char **argv)
 
 								if(s[j] == 3) {
 									//fprintf(stderr, "Kill signal sent to process\n");
-									kill(child_pid, SIGKILL);
+									if(kill(child_pid, SIGINT) !=0 ){ 
+
+					fprintf(stderr, "Error in system call: %s\n", strerror(errno));
+					exit(1);
+
+									}
 									//NEED TO WRITE MORE CODE
 								}
 
@@ -305,12 +341,34 @@ int main(int argc, char **argv)
 
 			else if(child_pid == 0) {
 
-				close(to_child_pipe[1]);
-				close(from_child_pipe[0]);
+				if(close(to_child_pipe[1]) != 0){ 
+
+					fprintf(stderr, "Error in system call: %s\n", strerror(errno));
+					exit(1);
+
+				}
+
+				if(close(from_child_pipe[0]) !=0 ){ 
+
+					fprintf(stderr, "Error in system call: %s\n", strerror(errno));
+					exit(1);
+
+				}
+
 				dup2(to_child_pipe[0], STDIN_FILENO);
 				dup2(from_child_pipe[1], STDOUT_FILENO);
-				close(to_child_pipe[0]);
-				close(from_child_pipe[1]);
+
+				if(close(to_child_pipe[0]) != 0) { 
+						fprintf(stderr, "Error in system call: %s\n", strerror(errno));
+					exit(1);
+
+				}
+
+				if(close(from_child_pipe[1]) != 0) { 
+	fprintf(stderr, "Error in system call: %s\n", strerror(errno));
+					exit(1);
+
+				}
 
 				//TO EXECUTE BASH SHELL
 
