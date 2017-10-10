@@ -1,0 +1,25 @@
+NAME:	RISHABH JAIN
+EMAIL:	rishabh.jain1198@gmail.com
+ID:	604817863
+
+lab0.c
+Source code file.
+
+makefile
+Pretty self explanatory.
+
+backtrace.png
+Screenshot of gdb examining the segmentation error.
+
+breakpoint.png
+Screenshot of gdb running the program up till the segmentation 
+error.
+
+README
+This file itself.
+
+In my smoke test cases, I basically checked all the possible 
+combinations of using a file, stdin and stdout for both input and 
+output. Along with that, another check of causing and catching 
+the segmentation error was included.
+

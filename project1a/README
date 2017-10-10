@@ -1,0 +1,41 @@
+NAME:	RISHABH JAIN
+EMAIL:	rishabh.jain1198@gmail.com
+ID:	604817863
+
+FILES INCLUDED:
+lab1a.c
+Main source file for project 1A.
+
+Makefile
+Makefile with default for compiling lab1a.c, dist for 
+making a tarball of lab1a.c, Makefile and README, and 
+clean for removing the tarball and compiled file.
+
+README
+This file. It contains information about all files, along 
+with some information about methodologies of solving this 
+project.
+
+
+Main challenges faced in this project was to understand the 
+obscure manual entries and how to actually use the functions.
+
+Checking for success of every single system call was also 
+a cumbersome process. 
+
+A huge problem was to understand the correct way to send 
+EOF to child process, and then subsequently find out that 
+the child process is finished with all its I/O. This was 
+ultimately done using a combination of POLLHUP and other 
+things, for a robust experience. 
+
+Making sure that SIGPIPE was caught is also an important 
+factor. Handling that properly took some tinkering, because 
+I wasn't sure whether the parent process was supposed to 
+simply exit about catching it, or should process the exit 
+stauts of the child process.
+
+Most of the testing of this program was done by running various 
+BASH commands, while the sanity check test was also a huge help.
+It helped me clear up my exit status codes, since they had to be 
+processed trivially to separate the signal and the actual status.
