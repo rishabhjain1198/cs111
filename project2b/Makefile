@@ -17,7 +17,7 @@ profile: lab2_list
 	-rm -f ./raw.gperf
 
 tests: lab2_list
-	-rm -f *.csv
+	-rm -f lab2b_list.csv
 	./lab2_list --threads=1 --iterations=1000 --sync=m >> lab2b_list.csv
 	./lab2_list --threads=2 --iterations=1000 --sync=m >> lab2b_list.csv
 	./lab2_list --threads=4 --iterations=1000 --sync=m >> lab2b_list.csv
@@ -39,6 +39,10 @@ tests: lab2_list
 
 
 graphs: lab2b_list.csv lab2_list.gp
+	-rm -f lab2b_1.png
+	-rm -f lab2b_2.png
+	-rm -f lab2b_3.png
+	-rm -f lab2b_4.png
 	gnuplot lab2_list.gp
 
 dist: Makefile lab2_list.c SortedList.c SortedList.h README lab2_list.gp
