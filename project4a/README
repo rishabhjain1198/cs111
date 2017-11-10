@@ -1,0 +1,28 @@
+#NAME:	RISHABH JAIN
+#EMAIL:	rishabh.jain1198@gmail.com
+#ID:	604817863
+
+my_beaglebone.jpg
+Selfie with device.
+
+connected.png
+Showing correct hostname and wifi access of beaglebone.
+
+copy.png
+Showing successfull scp command to copy tester.c (hello world program) \
+to beaglebone.
+
+build_run.png
+Showing successfully compiling and executing hello world program.
+
+git.png
+Showing successfull cloning of empty git repo and listing directory.
+
+README
+This file, contains info about other files.
+
+INFO ABOUT BEAGLEBONE:
+Wifi used was a mobile hotspot: AndroidAP
+SeeedStudio BeagleBone Green Wireless rev GW1A S/N BBGW16062878 
+Serial Number:	BBGW16062878 
+MAC Address:	2CF7F10654FC

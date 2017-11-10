@@ -1,0 +1,40 @@
+NAME:	RISHABH JAIN
+EMAIL:	rishabh.jain1198@gmail.com
+ID:	604817863
+
+FILES INCLUDED:
+lab1b-client.c
+Source file for client program to connect to server program.
+
+lab1b-server.c
+Source file for server program to accept connection from client program.
+
+Makefile
+Makefile with default for compiling lab1b-client.c and lab1b-server.c, 
+dist for making a tarball of lab1b-server.c, lab1b-client.c, Makefile 
+and README, and clean for removing the tarball and compiled files.
+
+README
+This file. It contains information about all files, along 
+with some information about methodologies of solving this 
+project.
+
+
+Main challenges faced in this project was to understand the 
+obscure manual entries and how to actually use the functions.
+
+Checking for success of every single system call was also 
+a cumbersome process. 
+
+A huge problem was to understand when to apply the encryption,
+and when to output bytes without decryption.
+
+Another problem was to make sure IV's were same across the baord.
+A trivial issue was to make sure I used the right encryption module 
+in the right place, as it was giving me issues with weird errors.
+
+Making sure that SIGPIPE was caught is also an important 
+factor. Handling that properly took some tinkering, because 
+I wasn't sure whether the parent process was supposed to 
+simply exit about catching it, or should process the exit 
+stauts of the child process.
