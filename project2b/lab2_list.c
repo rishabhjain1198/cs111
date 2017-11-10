@@ -38,6 +38,8 @@ long long total_runs = 0;
 long long number_of_locks = 0;
 long long lock_up_time = 0;
 
+long long num_lists = 1;
+
 int my_yield=0;
 int opt_yield = 0;
 
@@ -47,6 +49,13 @@ int yield_l = 0;
 
 int list_length;
 
+typedef struct {
+  SortedList_t list;
+  pthread_mutex_t lock;
+  int spin_lock;
+} SubList_t;
+
+SubList_t *lists;
 SortedList_t *list;
 SortedListElement_t *elem_arr;
 
@@ -169,6 +178,7 @@ int main(int argc, char **argv){
         { "iterations", optional_argument, 0, 'i'},
         { "yield", required_argument, 0, 'y'},
         { "sync", required_argument, 0, 'x'},
+        {"lists", required_argument, 0, 'l'},
         {NULL, 0, 0, 0},
     };
 
@@ -177,7 +187,7 @@ int main(int argc, char **argv){
     int c, option_index;
 
 
-    while((c = getopt_long(argc, argv, "t::i::y:x:", long_options, &option_index)) != -1)
+    while((c = getopt_long(argc, argv, "t::i::y:x:l:", long_options, &option_index)) != -1)
     {
         switch(c){
 
@@ -256,6 +266,10 @@ int main(int argc, char **argv){
                 }
                 break;
 
+            case 'l':
+                num_lists = atoi(optarg);
+                break;
+
             case '?':
                 fprintf(stderr, "Unknown argument found %x\n", optopt);
                 exit(1);
@@ -274,13 +288,34 @@ int main(int argc, char **argv){
     if(lock_type == MUTEX)
         pthread_mutex_init(&my_mutex, NULL);
 
-    list = malloc(sizeof(SortedList_t));
-    list->key = NULL;
-    list->next = list;
-    list->prev = list;
+
+    //////////////////
+    ////INITIALZING LISTS
+    int i = 0;
+
+    if((lists = malloc(sizeof(SubList_t)*num_lists)) == NULL) {
+      fprintf(stderr, "Error in allocating memory for sublists!\n");
+      exit(1);
+    }
+
+    for(i = 0; i < num_lists; i++)  {
+      SubList_t *temp_list = &lists[i];
+      SortedList_t* my_list = &temp_list -> list;
+      my_list -> key = NULL;
+      my_list -> next = list;
+      my_list -> prev = list;
+      if(lock_type == SPIN_LOCK)
+        temp_list->spin_lock = 0;
+      else if(lock_type == MUTEX) {
+        if(pthread_mutex_init(&temp_list->lock, NULL))  {
+          fprintf(stderr, "Error in initializing mutex for sublists!");
+          exit(1);
+        }
+      }
+    }
 
     elem_arr = malloc(total_runs*sizeof(SortedListElement_t));
-    int i = 0;
+
     for(i = 0; i < total_runs; i++)
     {
         int rand_letter = rand() % 26;
@@ -295,6 +330,8 @@ int main(int argc, char **argv){
 //        fprintf(stderr, "%d:  %s", i, rand_key);
     }
 
+
+    //////////////////
 
     int s;
     pthread_attr_t attr;
@@ -352,17 +389,38 @@ int main(int argc, char **argv){
     my_elapsed_time_in_ns += my_end_time.tv_nsec;
     my_elapsed_time_in_ns -= my_start_time.tv_nsec;
 
-    list_length = SortedList_length(list);
+    // list_length = SortedList_length(list);
+    //
+    // if(list_length != 0)
+    // {
+    //     fprintf(stderr, "List length not 0, synch problem!\n");
+    //     exit(2);
+    // }
 
-    if(list_length != 0)
-    {
-        fprintf(stderr, "List length not 0, synch problem!\n");
+    int list_length = 0;
+    int sumVar = 0;
+    for(i = 0; i < num_lists; i++)  {
+      sumVar = SortedList_length(&lists[i].list);
+      if( sumVar < 0)  {
+        fprintf(stderr, "Error in list!\n");
+        free(tinfo);
+        free(list);
+        free(elem_arr);
         exit(2);
+      }
+      else  {
+        list_length += sumVar;
+      }
     }
 
     free(tinfo);
     free(list);
     free(elem_arr);
+
+    if(list_length != 0)  {
+      fprintf(stderr, "Error in list length!\n");
+      exit(2);
+    }
 
 
     char tagger [100];
@@ -404,7 +462,7 @@ int main(int argc, char **argv){
       average_lock = lock_up_time/number_of_locks;
     }
 
-    fprintf(stdout, "%s,%lld,%lld,1,%lld,%lld,%lld,%lld\n", tagger, num_of_threads, num_of_iterations, num_of_operations, my_elapsed_time_in_ns , (( my_elapsed_time_in_ns )/( num_of_operations)), average_lock);
+    fprintf(stdout, "%s,%lld,%lld,%lld,%lld,%lld,%lld,%lld\n", tagger, num_of_threads, num_of_iterations, num_lists, num_of_operations, my_elapsed_time_in_ns , (( my_elapsed_time_in_ns )/( num_of_operations)), average_lock);
 
     return 0;
 }
