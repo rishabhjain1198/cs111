@@ -58,7 +58,7 @@ set key left top
 
 # grep out only successful (sum=0) yield runs
 plot \
-     "< grep -E \"list-none-m,[0-9]+,1000,\" lab_2b_list.csv" using ($2):($7) \
+     "< grep -E \"list-none-m,[0-9]+,1000,\" lab2b_list.csv" using ($2):($7) \
 	title 'time per op' with linespoints lc rgb 'red', \
-     "< grep -E \"list-none-m,[0-9]+,1000,\" lab_2b_list.csv" using ($2):($8) \
+     "< grep -E \"list-none-m,[0-9]+,1000,\" lab2b_list.csv" using ($2):($8) \
 	title 'avg wait time for a lock' with linespoints lc rgb 'green'
