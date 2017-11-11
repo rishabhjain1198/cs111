@@ -58,9 +58,9 @@ set key left top
 
 
 plot \
-     "< grep -E \"list-none-m,[0-9]+,1000,\" lab2b_list.csv" using ($2):($7) \
+     "< grep -E \"list-none-m,2?[0-9],1000,1,|list-none-m,16,1000,1,\" lab2b_list.csv" using ($2):($7) \
 	title 'time per op' with linespoints lc rgb 'red', \
-     "< grep -E \"list-none-m,[0-9]+,1000,\" lab2b_list.csv" using ($2):($8) \
+     "< grep -E \"list-none-m,2?[0-9],1000,1,|list-none-m,16,1000,1,\" lab2b_list.csv" using ($2):($8) \
 	title 'avg wait time for a lock' with linespoints lc rgb 'green'
 
 
