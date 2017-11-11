@@ -93,6 +93,8 @@ void* thread_function_lister(void* trd_info) {
         const char *key = ele -> key;
         sublist = &lists[hash(key) % num_lists];
 
+        fprintf(stderr, "i is %d, successful until insertion\n", i);
+
         switch(lock_type){
             case MUTEX:
               {
