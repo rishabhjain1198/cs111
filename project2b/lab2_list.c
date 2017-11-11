@@ -457,7 +457,7 @@ int main(int argc, char **argv){
         tinfo[i].thread_num = i;
         tinfo[i].argv_string = "";
 
-        fprintf(stderr, "Successful until thread creation\n");
+      //  fprintf(stderr, "Successful until thread creation\n");
 
         int ret = pthread_create(&tinfo[i].thread_id, &attr, &thread_function_lister, &tinfo[i]);
         if(ret != 0) {
@@ -476,6 +476,7 @@ int main(int argc, char **argv){
     for(i = 0; i < num_of_threads; i++){
 
         int ret = pthread_join(tinfo[i].thread_id, NULL);
+        fprintf(stderr, "Successful joining of threads!\n");
         //CHECK ret here as well
         if( ret != 0) {
             fprintf(stderr, "Error in joining threads!\n");
