@@ -118,6 +118,7 @@ void* thread_function_lister(void* trd_info) {
 
               //  SortedList_insert(list, &elem_arr[i]);
                 SortedList_insert(&sublist -> list, ele);
+                fprintf(stderr, "OYE\n");
 
                 pthread_mutex_unlock(lock);
                 break;
