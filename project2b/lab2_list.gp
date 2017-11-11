@@ -32,7 +32,7 @@ set terminal png
 set datafile separator ","
 
 # throughput vs number of threads for mutex and spin-lock synchronized adds and list operations
-set title "2b - 1: Thoughput vs Threads for mutex and spin-lock in list"
+set title "2b - 1: Throughput vs Threads for mutex and spin-lock in list"
 set xlabel "Threads"
 set logscale x 2
 set xrange [0.75:]
@@ -46,7 +46,7 @@ plot \
      "< grep -E \"list-none-s,[0-9]+,1000,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
 	title 'spin-lock' with linespoints lc rgb 'green'
 
-# time per op and avg wait for lock time vs number of threads for mutex
+
 set title "2b - 2: Time per op and Avg lock wait time vs Threads for mutex"
 set xlabel "Threads"
 set logscale x 2
@@ -56,7 +56,7 @@ set logscale y 10
 set output 'lab2b_2.png'
 set key left top
 
-# grep out only successful (sum=0) yield runs
+
 plot \
      "< grep -E \"list-none-m,[0-9]+,1000,\" lab2b_list.csv" using ($2):($7) \
 	title 'time per op' with linespoints lc rgb 'red', \
@@ -79,3 +79,41 @@ plot \
 	with points lc rgb "green" title "Mutex", \
     "< grep -E \"list-id-s,[0-9]+,[0-9]+,4,\" lab_2b_list.csv" using ($2):($3) \
 	with points lc rgb "blue" title "Spin-Lock"
+
+set title "2b - 4: Sublist throughput vs number of threads - mutex"
+set xlabel "Threads"
+set logscale x 2
+set xrange [0.75:]
+set ylabel "Throughput"
+set logscale y 10
+set output 'lab2b_4.png'
+
+
+plot \
+"< grep -E \"list-none-m,[0-9],1000,1,|list-none-m,12,1000,1,\" lab_2b_list.csv" using ($2):(1000000000/($7)) \
+title '1 list' with linespoints lc rgb 'red', \
+"< grep -E \"list-none-m,[0-9],1000,4,|list-none-m,12,1000,4,\" lab_2b_list.csv" using ($2):(1000000000/($7)) \
+title '4 lists' with linespoints lc rgb 'green', \
+"< grep -E \"list-none-m,[0-9],1000,8,|list-none-m,12,1000,8,\" lab_2b_list.csv" using ($2):(1000000000/($7)) \
+title '8 lists' with linespoints lc rgb 'blue', \
+"< grep -E \"list-none-m,[0-9],1000,16,|list-none-m,12,1000,16,\" lab_2b_list.csv" using ($2):(1000000000/($7)) \
+title '16 lists' with linespoints lc rgb 'orange'
+
+set title "2b - 5: Sublist throughput vs number of threads - spin-lock"
+set xlabel "Threads"
+set logscale x 2
+set xrange [0.75:]
+set ylabel "Throughput"
+set logscale y 10
+set output 'lab2b_5.png'
+
+
+plot \
+"< grep -E \"list-none-s,[0-9]+,1000,1,|list-none-s,12,1000,1,\" lab_2b_list.csv" using ($2):(1000000000/($7)) \
+title '1 list' with linespoints lc rgb 'red', \
+"< grep -E \"list-none-s,[0-9]+,1000,4,|list-none-s,12,1000,4,\" lab_2b_list.csv" using ($2):(1000000000/($7)) \
+title '4 lists' with linespoints lc rgb 'green', \
+"< grep -E \"list-none-s,[0-9]+,1000,8,|list-none-s,12,1000,8,\" lab_2b_list.csv" using ($2):(1000000000/($7)) \
+title '8 lists' with linespoints lc rgb 'blue', \
+"< grep -E \"list-none-s,[0-9]+,1000,16,|list-none-s,12,1000,16,\" lab_2b_list.csv" using ($2):(1000000000/($7)) \
+title '16 lists' with linespoints lc rgb 'orange'

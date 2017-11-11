@@ -101,6 +101,48 @@ tests: lab2_list
 	-./lab2_list --yield=id --lists=4 --threads=12 --iterations=80 --sync=s >> lab2b_list.csv
 	-./lab2_list --yield=id --lists=4 --threads=16 --iterations=80 --sync=s >> lab2b_list.csv
 
+	-./lab2_list --lists=1 --threads=1 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=4 --threads=1 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=8 --threads=1 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=16 --threads=1 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=1 --threads=2 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=4 --threads=2 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=8 --threads=2 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=16 --threads=2 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=1 --threads=4 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=4 --threads=4 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=8 --threads=4 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=16 --threads=4 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=1 --threads=8 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=4 --threads=8 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=8 --threads=8 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=16 --threads=8 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=1 --threads=12 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=4 --threads=12 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=8 --threads=12 --iterations=1000 --sync=m >> lab2b_list.csv
+	-./lab2_list --lists=16 --threads=12 --iterations=1000 --sync=m >> lab2b_list.csv
+
+	-./lab2_list --lists=1 --threads=1 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=4 --threads=1 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=8 --threads=1 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=16 --threads=1 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=1 --threads=2 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=4 --threads=2 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=8 --threads=2 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=16 --threads=2 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=1 --threads=4 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=4 --threads=4 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=8 --threads=4 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=16 --threads=4 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=1 --threads=8 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=4 --threads=8 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=8 --threads=8 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=16 --threads=8 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=1 --threads=12 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=4 --threads=12 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=8 --threads=12 --iterations=1000 --sync=s >> lab2b_list.csv
+	-./lab2_list --lists=16 --threads=12 --iterations=1000 --sync=s >> lab2b_list.csv
+
 
 
 
