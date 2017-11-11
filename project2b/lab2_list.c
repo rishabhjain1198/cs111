@@ -47,7 +47,6 @@ int yield_i = 0;
 int yield_d = 0;
 int yield_l = 0;
 
-int list_length;
 
 typedef struct {
   SortedList_t list;
@@ -70,15 +69,29 @@ void sigSegment() {
     exit(2);
 }
 
+unsigned long hash(const char *key) {
+    unsigned long val = 5381;
+    int i = 0;
+    for (i = 0; i < 5; i++)
+        val = ((val << 5) + val) + key[i];
+    return val;
+}
+
 
 void* thread_function_lister(void* trd_info) {
 
     int thread_num = (*((struct thread_info *) trd_info)).thread_num;
-
+    SortedListElement_t *ele;
+    SubList_t = sublist;
+    pthread_mutex_t *lock;
+    int *spinlock;
 
     int i = thread_num;
     for(i = thread_num; i < total_runs; i+=num_of_threads){
 
+        ele = &elem_arr[i];
+        char *key = ele -> key;
+        sublist = &lists[hash(key) % num_lists];
 
         switch(lock_type){
             case MUTEX:
@@ -88,8 +101,8 @@ void* thread_function_lister(void* trd_info) {
                 clock_gettime(CLOCK_MONOTONIC, &my_start);
 
 
-
-                pthread_mutex_lock(&my_mutex);
+                lock = &sublist -> lock;
+                pthread_mutex_lock(lock);
 
 
 
@@ -101,8 +114,10 @@ void* thread_function_lister(void* trd_info) {
                 lock_up_time -= my_start.tv_nsec;
 
 
-                SortedList_insert(list, &elem_arr[i]);
-                pthread_mutex_unlock(&my_mutex);
+              //  SortedList_insert(list, &elem_arr[i]);
+                SortedList_insert(&sublist -> list, ele);
+
+                pthread_mutex_unlock(lock);
                 break;
               }
             case SPIN_LOCK:
@@ -110,9 +125,9 @@ void* thread_function_lister(void* trd_info) {
                 struct timespec my_start;
                 clock_gettime(CLOCK_MONOTONIC, &my_start);
 
+                spinlock = &sublist -> spinlock;
 
-
-                while(__sync_lock_test_and_set(&my_spin_lock, 1));
+                while(__sync_lock_test_and_set(spinlock, 1));
 
 
                 number_of_locks++;
@@ -123,12 +138,15 @@ void* thread_function_lister(void* trd_info) {
                 lock_up_time -= my_start.tv_nsec;
 
 
-                SortedList_insert(list, &elem_arr[i]);
-                __sync_lock_release(&my_spin_lock);
+                // SortedList_insert(list, &elem_arr[i]);
+                SortedList_insert(&sublist -> list, ele);
+
+                __sync_lock_release(spinlock);
                 break;
               }
             default:
-                SortedList_insert(list, &elem_arr[i]);
+                // SortedList_insert(list, &elem_arr[i]);
+                SortedList_insert(&sublist -> list, ele);
                 break;
 
         }
@@ -136,7 +154,59 @@ void* thread_function_lister(void* trd_info) {
 
 
 
-    list_length = SortedList_length(list);
+    int sumVar = 0;
+    switch(lock_type) {
+      case MUTEX:
+
+      struct timespec my_start;
+      clock_gettime(CLOCK_MONOTONIC, &my_start);
+
+      for(i = 0; i < num_lists; i++)
+        pthread_mutex_lock(&lists[i].lock);
+
+      clock_gettime(CLOCK_MONOTONIC, &my_end);
+      lock_up_time += (my_end.tv_sec - my_start.tv_sec) * 1000000000;
+      lock_up_time += my_end.tv_nsec;
+      lock_up_time -= my_start.tv_nsec;
+
+      for(i = 0; i < num_lists; i++)  {
+          sumVar = SortedList_length(&lists[i].list);
+
+      for(i = 0; i < num_lists; i++)
+              pthread_mutex_unlock(&lists[i].lock);
+      }
+
+      break;
+
+      case SPIN_LOCK:
+      struct timespec my_start;
+      clock_gettime(CLOCK_MONOTONIC, &my_start);
+
+      for(i = 0; i < num_lists; i++)
+        while(__sync_lock_test_and_set(&lists[i].spinlock, 1));
+
+        clock_gettime(CLOCK_MONOTONIC, &my_end);
+        lock_up_time += (my_end.tv_sec - my_start.tv_sec) * 1000000000;
+        lock_up_time += my_end.tv_nsec;
+        lock_up_time -= my_start.tv_nsec;
+
+      for(i = 0; i < num_lists; i++)
+        sumVar = SortedList_length(&lists[i].list);
+
+      for(i = 0; i < num_lists; i++)
+        __sync_lock_release(&lists[i].spinlock);
+
+      break;
+
+      default:
+        for(i = 0; i < num_lists; i++)
+          sumVar = SortedList_length(&lists[i].list);
+
+      break;
+
+    }
+
+
     SortedListElement_t *temp;
 
     for(i = thread_num; i < total_runs; i+=num_of_threads){
@@ -314,6 +384,7 @@ int main(int argc, char **argv){
       }
     }
 
+
     elem_arr = malloc(total_runs*sizeof(SortedListElement_t));
 
     for(i = 0; i < total_runs; i++)
@@ -414,7 +485,7 @@ int main(int argc, char **argv){
     }
 
     free(tinfo);
-    free(list);
+    free(lists);
     free(elem_arr);
 
     if(list_length != 0)  {
