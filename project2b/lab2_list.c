@@ -412,6 +412,8 @@ int main(int argc, char **argv){
       }
     }
 
+    fprintf(stderr, "Initialization successful\n");
+
 
     elem_arr = malloc(total_runs*sizeof(SortedListElement_t));
 
