@@ -155,7 +155,7 @@ void* thread_function_lister(void* trd_info) {
         }
     }
 
-    fprintf(stderr, "Insertion successful!\n");
+  //  fprintf(stderr, "Insertion successful!\n");
 
     int sumVar;
     sumVar = 0;
@@ -218,7 +218,7 @@ void* thread_function_lister(void* trd_info) {
 
     }
 
-    fprintf(stderr, "Length succesful!\n");
+    //fprintf(stderr, "Length succesful!\n");
 
     SortedListElement_t *temp;
 
@@ -266,7 +266,7 @@ void* thread_function_lister(void* trd_info) {
     }
 
 
-    fprintf(stderr, "List done work!\n");
+    //fprintf(stderr, "List done work!\n");
     return NULL;
 
 }    //FUNCTION ENDS HERE
@@ -487,7 +487,7 @@ int main(int argc, char **argv){
     for(i = 0; i < num_of_threads; i++){
 
         int ret = pthread_join(tinfo[i].thread_id, NULL);
-        fprintf(stderr, "Successful joining of threads!\n");
+      //  fprintf(stderr, "Successful joining of threads!\n");
         //CHECK ret here as well
         if( ret != 0) {
             fprintf(stderr, "Error in joining threads!\n");
