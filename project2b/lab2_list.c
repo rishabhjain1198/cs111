@@ -165,6 +165,7 @@ void* thread_function_lister(void* trd_info) {
       for(i = 0; i < num_lists; i++)
         pthread_mutex_lock(&lists[i].lock);
 
+      struct timespec my_end;
       clock_gettime(CLOCK_MONOTONIC, &my_end);
       lock_up_time += (my_end.tv_sec - my_start.tv_sec) * 1000000000;
       lock_up_time += my_end.tv_nsec;
@@ -186,6 +187,7 @@ void* thread_function_lister(void* trd_info) {
       for(i = 0; i < num_lists; i++)
         while(__sync_lock_test_and_set(&lists[i].spin_lock, 1));
 
+        struct timespec my_end;
         clock_gettime(CLOCK_MONOTONIC, &my_end);
         lock_up_time += (my_end.tv_sec - my_start.tv_sec) * 1000000000;
         lock_up_time += my_end.tv_nsec;
@@ -207,25 +209,46 @@ void* thread_function_lister(void* trd_info) {
 
     }
 
+    if(sumVar < 0)  {
+      fprintf(stderr, "Error in list!\n");
+      exit(2);
+
+    }
+
 
     SortedListElement_t *temp;
 
     for(i = thread_num; i < total_runs; i+=num_of_threads){
+        ele = &elem_arr[i];
+        const char *key = ele -> key;
+        sublist = &lists[hash(key) % num_lists];
         switch(lock_type){
-            case MUTEX:
-                pthread_mutex_lock(&my_mutex);
-                temp = SortedList_lookup(list, elem_arr[i].key);
+            case MUTEX:{
+              lock = &sublist -> lock;
+              struct timespec my_start;
+              clock_gettime(CLOCK_MONOTONIC, &my_start);
+                pthread_mutex_lock(lock);
+                clock_gettime(CLOCK_MONOTONIC, &my_end);
+                lock_up_time += (my_end.tv_sec - my_start.tv_sec) * 1000000000;
+                lock_up_time += my_end.tv_nsec;
+                lock_up_time -= my_start.tv_nsec;
+                temp = SortedList_lookup(&lists[i].list, key);
                 SortedList_delete(temp);
-                pthread_mutex_unlock(&my_mutex);
-                break;
-            case SPIN_LOCK:
-                while(__sync_lock_test_and_set(&my_spin_lock, 1));
-                temp = SortedList_lookup(list, elem_arr[i].key);
+                pthread_mutex_unlock(lock);
+                break;}
+            case SPIN_LOCK:{
+                spinlock = &sublist -> spin_lock;
+                while(__sync_lock_test_and_set(spinlock, 1));
+                clock_gettime(CLOCK_MONOTONIC, &my_end);
+                lock_up_time += (my_end.tv_sec - my_start.tv_sec) * 1000000000;
+                lock_up_time += my_end.tv_nsec;
+                lock_up_time -= my_start.tv_nsec;
+                temp = SortedList_lookup(&lists[i].list, key);
                 SortedList_delete(temp);
-                __sync_lock_release(&my_spin_lock);
-                break;
+                __sync_lock_release(spinlock);
+                break;}
             default:
-                temp = SortedList_lookup(list, elem_arr[i].key);
+                temp = SortedList_lookup(&lists[i].list, key);
                 SortedList_delete(temp);
                 break;
 
