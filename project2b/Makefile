@@ -152,6 +152,7 @@ graphs: lab2b_list.csv lab2_list.gp
 	-rm -f lab2b_2.png
 	-rm -f lab2b_3.png
 	-rm -f lab2b_4.png
+	-rm -f lab2b_5.png
 	gnuplot lab2_list.gp
 
 dist: Makefile lab2_list.c SortedList.c SortedList.h README lab2_list.gp
@@ -159,8 +160,9 @@ dist: Makefile lab2_list.c SortedList.c SortedList.h README lab2_list.gp
 	make tests
 	make graphs
 	make profile
-#FILL THIS LINE YOU FUCKER
+	tar -cvzf lab2b-604817863.tar.gz Makefile lab2_list.c SortedList.c SortedList.h lab2b_list.csv README lab2_list.gp \
+	lab2b_1.png lab2b_2.png lab2b_3.png lab2b_4.png lab2b_5.png
 	-rm -f *.csv *.png
 
 clean:
-	-rm -f lab2b-604817863.tar.gz lab2_list *.csv *.png profile.out
+	-rm -f lab2b-604817863.tar.gz lab2_list lab2b_list.csv lab2b_1.png lab2b_2.png lab2b_3.png lab2b_4.png lab2b_5.png profile.out
