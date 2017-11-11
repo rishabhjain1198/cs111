@@ -93,7 +93,7 @@ void* thread_function_lister(void* trd_info) {
         const char *key = ele -> key;
         sublist = &lists[hash(key) % num_lists];
 
-        fprintf(stderr, "i is %d, successful until insertion\n", i);
+    //    fprintf(stderr, "i is %d, successful until insertion\n", i);
 
         switch(lock_type){
             case MUTEX:
@@ -218,7 +218,8 @@ void* thread_function_lister(void* trd_info) {
 
     }
 
-
+    fprintf(stderr, "Length succesful!\n");
+    
     SortedListElement_t *temp;
 
     for(i = thread_num; i < total_runs; i+=num_of_threads){
