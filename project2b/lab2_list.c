@@ -82,7 +82,7 @@ void* thread_function_lister(void* trd_info) {
 
     int thread_num = (*((struct thread_info *) trd_info)).thread_num;
     SortedListElement_t *ele;
-    SubList_t sublist;
+    SubList_t *sublist;
     pthread_mutex_t *lock;
     int *spinlock;
 
@@ -154,7 +154,8 @@ void* thread_function_lister(void* trd_info) {
 
 
 
-    int sumVar = 0;
+    int sumVar;
+    sumVar = 0;
     switch(lock_type) {
       case MUTEX:
 
