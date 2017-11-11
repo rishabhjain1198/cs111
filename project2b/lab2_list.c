@@ -158,7 +158,7 @@ void* thread_function_lister(void* trd_info) {
     sumVar = 0;
     switch(lock_type) {
       case MUTEX:
-
+      {
       struct timespec my_start;
       clock_gettime(CLOCK_MONOTONIC, &my_start);
 
@@ -178,8 +178,8 @@ void* thread_function_lister(void* trd_info) {
       }
 
       break;
-
-      case SPIN_LOCK:
+    }
+      case SPIN_LOCK:{
       struct timespec my_start;
       clock_gettime(CLOCK_MONOTONIC, &my_start);
 
@@ -197,7 +197,7 @@ void* thread_function_lister(void* trd_info) {
       for(i = 0; i < num_lists; i++)
         __sync_lock_release(&lists[i].spin_lock);
 
-      break;
+      break;}
 
       default:
         for(i = 0; i < num_lists; i++)
