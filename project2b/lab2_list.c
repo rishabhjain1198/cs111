@@ -219,7 +219,7 @@ void* thread_function_lister(void* trd_info) {
     }
 
     fprintf(stderr, "Length succesful!\n");
-    
+
     SortedListElement_t *temp;
 
     for(i = thread_num; i < total_runs; i+=num_of_threads){
@@ -264,6 +264,7 @@ void* thread_function_lister(void* trd_info) {
     }
 
 
+    fprintf(stderr, "List done work!\n");
     return NULL;
 
 }    //FUNCTION ENDS HERE
