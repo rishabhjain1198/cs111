@@ -62,3 +62,20 @@ plot \
 	title 'time per op' with linespoints lc rgb 'red', \
      "< grep -E \"list-none-m,[0-9]+,1000,\" lab2b_list.csv" using ($2):($8) \
 	title 'avg wait time for a lock' with linespoints lc rgb 'green'
+
+
+set title "2b - 3: Successful iterations"
+set logscale x 2
+set xrange [0.75:]
+set xlabel "Threads"
+set ylabel "successful iterations"
+set logscale y 10
+set output 'lab2b_3.png'
+set key right top
+plot \
+    "< grep -E \"list-id-none,[0-9]+,[0-9]+,4,\" lab_2b_list.csv" using ($2):($3) \
+	with points lc rgb "red" title "Unprotected", \
+    "< grep -E \"list-id-m,[0-9]+,[0-9]+,4,\" lab_2b_list.csv" using ($2):($3) \
+	with points lc rgb "green" title "Mutex", \
+    "< grep -E \"list-id-s,[0-9]+,[0-9]+,4,\" lab_2b_list.csv" using ($2):($3) \
+	with points lc rgb "blue" title "Spin-Lock"
