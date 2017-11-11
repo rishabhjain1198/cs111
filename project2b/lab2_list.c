@@ -403,8 +403,8 @@ int main(int argc, char **argv){
       SubList_t *temp_list = &lists[i];
       SortedList_t* my_list = &temp_list -> list;
       my_list -> key = NULL;
-      my_list -> next = list;
-      my_list -> prev = list;
+      my_list -> next = my_list;
+      my_list -> prev = my_list;
       if(lock_type == SPIN_LOCK)
         temp_list->spin_lock = 0;
       else if(lock_type == MUTEX) {
@@ -434,7 +434,9 @@ int main(int argc, char **argv){
 //        fprintf(stderr, "%d:  %s", i, rand_key);
     }
 
-    SortedList_insert(&lists[0].list, &elem_arr[0]);
+    //TESTING
+    //SortedList_insert(&lists[0].list, &elem_arr[0]);
+
 
 
     //////////////////
