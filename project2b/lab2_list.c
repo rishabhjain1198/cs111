@@ -412,7 +412,7 @@ int main(int argc, char **argv){
       }
     }
 
-    fprintf(stderr, "Initialization successful\n");
+  //  fprintf(stderr, "Initialization successful\n");
 
 
     elem_arr = malloc(total_runs*sizeof(SortedListElement_t));
@@ -456,6 +456,8 @@ int main(int argc, char **argv){
 
         tinfo[i].thread_num = i;
         tinfo[i].argv_string = "";
+
+        fprintf(stderr, "Successful until thread creation\n");
 
         int ret = pthread_create(&tinfo[i].thread_id, &attr, &thread_function_lister, &tinfo[i]);
         if(ret != 0) {
