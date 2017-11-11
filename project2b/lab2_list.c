@@ -55,7 +55,7 @@ typedef struct {
 } SubList_t;
 
 SubList_t *lists;
-SortedList_t *list;
+//SortedList_t *list;
 SortedListElement_t *elem_arr;
 
 struct thread_info {    /* Used as argument to thread_start() */
@@ -117,7 +117,7 @@ void* thread_function_lister(void* trd_info) {
 
 
               //  SortedList_insert(list, &elem_arr[i]);
-                SortedList_insert(sublist -> list, ele);
+                SortedList_insert(&sublist -> list, ele);
 
 
                 pthread_mutex_unlock(lock);
@@ -433,6 +433,8 @@ int main(int argc, char **argv){
         elem_arr[i].key = rand_key;
 //        fprintf(stderr, "%d:  %s", i, rand_key);
     }
+
+    SortedList_insert(&lists[0].list, &elem_arr[0]);
 
 
     //////////////////
