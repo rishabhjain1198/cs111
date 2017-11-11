@@ -2,15 +2,12 @@
 #EMAIL: rishabh.jain1198@gmail.com
 #ID: 604817863
 
-lab2_add.c
-Source file for part 1, contains test driver program for adding function.
-
 lab2_list.c
-One of the source files for part 2, contains test driver program for 
+One of the source files for part 2B, contains test driver program for 
 linked list.
 
 SortedList.c
-Another source file for part 2, containing implementation of linked list.
+Another source file for part 2B, containing implementation of linked list.
 
 SortedList.h
 Header file containing interface for linked list. Not modified.
@@ -24,68 +21,63 @@ This file.
 PNG files
 Files graphed using gnuplot.
 
-lab2_add.gp & lab2_list.gp
-Scripts to graph csv files
+lab2_list.gp
+Script to graph csv file
 
-lab2_add.csv & lab2_list.csv
-CSV files containing data generated through make tests.
+lab2_list.csv
+CSV file containing data generated through make tests.
 
 Main problem in this assignment was trying to deal with make dist 
-problem in the sanity checking test script.
+problem in the sanity checking test script, as well as making sublists work 
+without getting segmentation errors.
 
 
 ANSWERS TO QUESTIONS IN SPEC.
 
-2.1.1
-If number of iterations is small, a thread probably finishes before 
-another thread starts running, hence no error is seen. This is because 
-the cost of creating another thread is high, while the work done by a 
-thread once it has been created is small and fast. Hence, a smaller 
-number of iterations will fail much less often.
+2.3.1
+A lot of time is spent in list operations since they are costlier 
+than locks. This is because number of threads is very low.
 
-2.1.2
-The yield runs are slower since a lot of thread switches are done. Instead 
-of finishing the work in one thread, the CPU has to switch to another 
-thread very often, hence it is slower. It is very hard, or near impossible 
-to get correct per-operation timings while using the yield option. This is 
-because no matter what clock we use, it is still going to count the time 
-a thread waits in the queue while it is waiting to run on the CPU.
+Continously checking the spin-lock costs the most for high thread spin-lock 
+tests.
 
-2.1.3
-The cost of system calls is high, and computation is low. With increasing 
-iterations, only number of computations increases. Hence, average cost of 
-operations drops. 
-To get a good idea of the correct cost per operation, we could just use 
-a very large number of iterations, since the high skewed cost of system 
-call would eventually be balanced out by the large number of actual 
-computations.
+If list length is really long, then list operations like lookup are extremely 
+costly. However, if length is not long, then context-switches will turn out to 
+be more expensive than list ops in high thread mutex tests.
 
-2.1.4
-Since the number of threads are low, usually no synchronization problem 
-happens because before another thread starts working, the previous thread 
-has already finished. 
-There is significant slowdown as thread number rises since each thread has 
-to wait for another thread to finish and release the lock. That is, 
-memory contention increases with increase in number of threads.
+2.3.2
+The checking of testing the spin-lock line consumes by far the most cycles in 
+a test with a large number of threads.
 
-2.2.1
-We see that the cost per operation is much higher in part 2, because the critical 
-section in linked list is much wider than the normal addition function. Hence,
-threads have to wait for a much longer time, and the lock is harder.
-Generally, the cost per operation falls with number of iterations since the 
-larger number of computatiosn offsets the expensive system calls.
-Cost per operations increases with number of threads since more expensive 
-thread creation calls are being made.
-We see that a spin lock is very inefficient for larger number of threads,
-which is because it uses a very naive approach of waiting on a while loop.
+This is because of aggressive memory contention. When the number of threads 
+increases, the amount of time other threads will have to wait while a thread 
+accesses the memory also increases. While the other threads are waiting, they 
+make the CPU do busywork in the form of spin-lock checks, which thus account 
+for most of the CPU cycles.
 
-2.2.2
-We see that for low number of threads, mutex and spin lock perform similarly.
-However, as number of threads rises, mutex seems to reach a stable point, 
-while spin lock continues to become costlier. This is because of the 
-naive implementation of spin lock, relying on a while loop to 
-do busy work while waiting for the thread to have its turn at the memory.
-When the number of threads increases, it is likely that when put to 
-sleep by a mutex, its turn will come much later in the future, so that the 
-cost of such an operation would not matter anymore, and would be much more 
-efficient than simply spin-locking the computer in a very CPU intensive state.
+2.3.3
+Since more threads want access to the same lock, the waiting time for it 
+naturally increases.
+
+There is higher memory contention, which slightly increases the completion 
+time, which counts the time for contention / context switch.
+
+The completion time indicates the wall time for the whole operation.
+The wait time calculates the wall time for all the threads combined, which 
+leads to a much larger sum. These two metrics are thus completely separate, 
+and any comparison would be meaningless since the threads probably have a 
+large amount of overlapping time which is counted multiple times.
+
+2.3.4
+Change in performance is positive, as the number of lists increases. This is 
+because when there are more lists, memory contention decreases, since the 
+length is smaller.
+
+It will continue increasing up till the point the CPU is running the maximum 
+number of threads it can on its cores with real parallelism. When you increase 
+the number of sublists beyond that point, the CPU will implement virtual 
+parallelism, which will not give any performance boost. 
+
+No. Making sublists reduces the average size of the list, thus also reducing 
+the time in the critical section. So the possibility of contention is 
+decreased upon list partitioning.
