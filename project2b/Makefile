@@ -163,7 +163,7 @@ dist: Makefile lab2_list.c SortedList.c SortedList.h README lab2_list.gp
 	make graphs
 	make profile
 	tar -cvzf lab2b-604817863.tar.gz Makefile lab2_list.c SortedList.c SortedList.h lab2b_list.csv README lab2_list.gp \
-	lab2b_1.png lab2b_2.png lab2b_3.png lab2b_4.png lab2b_5.png
+	lab2b_1.png lab2b_2.png lab2b_3.png lab2b_4.png lab2b_5.png profile.out
 
 clean:
 	-rm -f lab2b-604817863.tar.gz lab2_list profile.out
