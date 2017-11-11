@@ -82,7 +82,7 @@ void* thread_function_lister(void* trd_info) {
 
     int thread_num = (*((struct thread_info *) trd_info)).thread_num;
     SortedListElement_t *ele;
-    SubList_t = sublist;
+    SubList_t sublist;
     pthread_mutex_t *lock;
     int *spinlock;
 
@@ -90,7 +90,7 @@ void* thread_function_lister(void* trd_info) {
     for(i = thread_num; i < total_runs; i+=num_of_threads){
 
         ele = &elem_arr[i];
-        char *key = ele -> key;
+        const char *key = ele -> key;
         sublist = &lists[hash(key) % num_lists];
 
         switch(lock_type){
@@ -125,7 +125,7 @@ void* thread_function_lister(void* trd_info) {
                 struct timespec my_start;
                 clock_gettime(CLOCK_MONOTONIC, &my_start);
 
-                spinlock = &sublist -> spinlock;
+                spinlock = &sublist -> spin_lock;
 
                 while(__sync_lock_test_and_set(spinlock, 1));
 
@@ -183,7 +183,7 @@ void* thread_function_lister(void* trd_info) {
       clock_gettime(CLOCK_MONOTONIC, &my_start);
 
       for(i = 0; i < num_lists; i++)
-        while(__sync_lock_test_and_set(&lists[i].spinlock, 1));
+        while(__sync_lock_test_and_set(&lists[i].spin_lock, 1));
 
         clock_gettime(CLOCK_MONOTONIC, &my_end);
         lock_up_time += (my_end.tv_sec - my_start.tv_sec) * 1000000000;
@@ -194,7 +194,7 @@ void* thread_function_lister(void* trd_info) {
         sumVar = SortedList_length(&lists[i].list);
 
       for(i = 0; i < num_lists; i++)
-        __sync_lock_release(&lists[i].spinlock);
+        __sync_lock_release(&lists[i].spin_lock);
 
       break;
 
