@@ -41,9 +41,9 @@ set logscale y 10
 set output 'lab2b_1.png'
 
 plot \
-     "< grep -E \"list-none-m,[0-9]+,1000,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
+     "< grep -E \"list-none-m,[0-9]+,1000,1,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
 	title 'mutex' with linespoints lc rgb 'red', \
-     "< grep -E \"list-none-s,[0-9]+,1000,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
+     "< grep -E \"list-none-s,[0-9]+,1000,1,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
 	title 'spin-lock' with linespoints lc rgb 'green'
 
 
@@ -90,14 +90,15 @@ set output 'lab2b_4.png'
 
 
 plot \
-"< grep -E \"list-none-m,[0-9],1000,1,|list-none-m,12,1000,1,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
+"< grep -E \"list-none-m,1,1000,1,|list-none-m,12,1000,1,|list-none-m,2,1000,1,|list-none-m,4,1000,1,|list-none-m,8,1000,1,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
 title '1 list' with linespoints lc rgb 'red', \
-"< grep -E \"list-none-m,[0-9],1000,4,|list-none-m,12,1000,4,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
+"< grep -E \"list-none-m,1,1000,4,|list-none-m,12,1000,4,|list-none-m,2,1000,4,|list-none-m,4,1000,4,|list-none-m,8,1000,4,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
 title '4 lists' with linespoints lc rgb 'green', \
-"< grep -E \"list-none-m,[0-9],1000,8,|list-none-m,12,1000,8,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
+"< grep -E \"list-none-m,1,1000,8,|list-none-m,12,1000,8,|list-none-m,2,1000,8,|list-none-m,4,1000,8,|list-none-m,8,1000,8,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
 title '8 lists' with linespoints lc rgb 'blue', \
-"< grep -E \"list-none-m,[0-9],1000,16,|list-none-m,12,1000,16,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
+"< grep -E \"list-none-m,1,1000,16,|list-none-m,12,1000,16,|list-none-m,2,1000,16,|list-none-m,4,1000,16,|list-none-m,8,1000,16,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
 title '16 lists' with linespoints lc rgb 'orange'
+
 
 set title "2b - 5: Sublist throughput vs number of threads - spin-lock"
 set xlabel "Threads"
@@ -109,11 +110,11 @@ set output 'lab2b_5.png'
 
 
 plot \
-"< grep -E \"list-none-s,[0-9]+,1000,1,|list-none-s,12,1000,1,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
+"< grep -E \"list-none-s,1,1000,1,|list-none-s,12,1000,1,|list-none-s,2,1000,1,|list-none-s,4,1000,1,|list-none-s,8,1000,1,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
 title '1 list' with linespoints lc rgb 'red', \
-"< grep -E \"list-none-s,[0-9]+,1000,4,|list-none-s,12,1000,4,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
+"< grep -E \"list-none-s,1,1000,4,|list-none-s,12,1000,4,|list-none-s,2,1000,4,|list-none-s,4,1000,4,|list-none-s,8,1000,4,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
 title '4 lists' with linespoints lc rgb 'green', \
-"< grep -E \"list-none-s,[0-9]+,1000,8,|list-none-s,12,1000,8,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
+"< grep -E \"list-none-s,1,1000,8,|list-none-s,12,1000,8,|list-none-s,2,1000,8,|list-none-s,4,1000,8,|list-none-s,8,1000,8,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
 title '8 lists' with linespoints lc rgb 'blue', \
-"< grep -E \"list-none-s,[0-9]+,1000,16,|list-none-s,12,1000,16,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
+"< grep -E \"list-none-s,1,1000,16,|list-none-s,12,1000,16,|list-none-s,2,1000,16,|list-none-s,4,1000,16,|list-none-s,8,1000,16,\" lab2b_list.csv" using ($2):(1000000000/($7)) \
 title '16 lists' with linespoints lc rgb 'orange'

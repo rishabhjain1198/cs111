@@ -19,7 +19,7 @@ profile: lab2_list
 
 tests: lab2_list
 	-rm -f lab2b_list.csv
-
+	./lab2_list --threads=12 --iterations=1000 --sync=m >> lab2b_list.csv
 	./lab2_list --threads=16 --iterations=1000 --sync=m >> lab2b_list.csv
 	./lab2_list --threads=24 --iterations=1000 --sync=m >> lab2b_list.csv
 	./lab2_list --threads=16 --iterations=1000 --sync=s >> lab2b_list.csv
@@ -148,7 +148,7 @@ graphs: lab2b_list.csv lab2_list.gp
 	gnuplot lab2_list.gp
 
 dist: Makefile lab2_list.c SortedList.c SortedList.h README lab2_list.gp
-	-rm -f lab2a-604817863.tar.gz lab2_add lab2_list *.csv *.png
+	-rm -f lab2b-604817863.tar.gz lab2_list *.csv *.png profile.out
 	make build
 	make tests
 	make graphs
