@@ -515,7 +515,8 @@ int main(int argc, char **argv){
       if( sumVar < 0)  {
         fprintf(stderr, "Error in list!\n");
         free(tinfo);
-        free(list);
+        //free(list);
+        free(lists);
         free(elem_arr);
         exit(2);
       }
