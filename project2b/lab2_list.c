@@ -228,6 +228,7 @@ void* thread_function_lister(void* trd_info) {
               struct timespec my_start;
               clock_gettime(CLOCK_MONOTONIC, &my_start);
                 pthread_mutex_lock(lock);
+                struct timespec my_end;
                 clock_gettime(CLOCK_MONOTONIC, &my_end);
                 lock_up_time += (my_end.tv_sec - my_start.tv_sec) * 1000000000;
                 lock_up_time += my_end.tv_nsec;
@@ -238,7 +239,10 @@ void* thread_function_lister(void* trd_info) {
                 break;}
             case SPIN_LOCK:{
                 spinlock = &sublist -> spin_lock;
+                struct timespec my_start;
+                clock_gettime(CLOCK_MONOTONIC, &my_start);
                 while(__sync_lock_test_and_set(spinlock, 1));
+                struct timespec my_end;
                 clock_gettime(CLOCK_MONOTONIC, &my_end);
                 lock_up_time += (my_end.tv_sec - my_start.tv_sec) * 1000000000;
                 lock_up_time += my_end.tv_nsec;
