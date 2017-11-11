@@ -238,7 +238,7 @@ void* thread_function_lister(void* trd_info) {
                 lock_up_time += my_end.tv_nsec;
                 lock_up_time -= my_start.tv_nsec;
                 fprintf(stderr, "Doing lookup!\n");
-                temp = SortedList_lookup(&lists[i].list, key);
+                temp = SortedList_lookup(&sublist -> list, key);
                 fprintf(stderr, "Lookup succesful!\n");
                 SortedList_delete(temp);
                 pthread_mutex_unlock(lock);
@@ -253,12 +253,12 @@ void* thread_function_lister(void* trd_info) {
                 lock_up_time += (my_end.tv_sec - my_start.tv_sec) * 1000000000;
                 lock_up_time += my_end.tv_nsec;
                 lock_up_time -= my_start.tv_nsec;
-                temp = SortedList_lookup(&lists[i].list, key);
+                temp = SortedList_lookup(&sublist -> list, key);
                 SortedList_delete(temp);
                 __sync_lock_release(spinlock);
                 break;}
             default:
-                temp = SortedList_lookup(&lists[i].list, key);
+                temp = SortedList_lookup(&sublist -> list, key);
                 SortedList_delete(temp);
                 break;
 
