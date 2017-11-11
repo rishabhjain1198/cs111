@@ -152,7 +152,7 @@ void* thread_function_lister(void* trd_info) {
         }
     }
 
-
+    fprintf(stderr, "Insertion successful!\n");
 
     int sumVar;
     sumVar = 0;
