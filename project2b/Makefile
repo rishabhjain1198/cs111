@@ -157,6 +157,7 @@ graphs: lab2b_list.csv lab2_list.gp
 
 dist: Makefile lab2_list.c SortedList.c SortedList.h README lab2_list.gp
 	-rm -f lab2a-604817863.tar.gz lab2_add lab2_list *.csv *.png
+	make build
 	make tests
 	make graphs
 	make profile
