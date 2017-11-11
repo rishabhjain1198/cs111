@@ -11,8 +11,9 @@ build: lab2_list.c SortedList.c SortedList.h
 
 profile: lab2_list
 	-rm -f ./raw.gperf
+	-rm -f profile.out
 	CPUPROFILE=./raw.gperf ./lab2_list --threads=12 --iterations=1000 --sync=s
-	pprof --text ./lab2_list ./raw.gperf > profile.out
+	pprof --text ./lab2_list ./raw.gperf >> profile.out
 	pprof --list=thread_function_lister ./lab2_list ./raw.gperf >> profile.out
 	-rm -f ./raw.gperf
 
