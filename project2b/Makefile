@@ -19,7 +19,6 @@ profile: lab2_list
 
 tests: lab2_list
 	-rm -f lab2b_list.csv
-	./lab2_list --threads=12 --iterations=1000 --sync=m >> lab2b_list.csv
 	./lab2_list --threads=16 --iterations=1000 --sync=m >> lab2b_list.csv
 	./lab2_list --threads=24 --iterations=1000 --sync=m >> lab2b_list.csv
 	./lab2_list --threads=16 --iterations=1000 --sync=s >> lab2b_list.csv
