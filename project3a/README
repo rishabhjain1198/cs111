@@ -1,0 +1,33 @@
+NAME: RISHABH JAIN
+EMAIL: RISHABHJAIN@UCLA.EDU
+ID: 604817863
+
+CS 111
+OPERATING SYSTEM PRINCIPLES
+PROJECT 3A
+
+README FILE
+
+DETAILS OF SUBMITTED FILES:
+
+lab3a.c
+Source file containing all the required code.
+
+ext2_fs.h
+Header file provided by instructor for project 3A.
+
+Makefile
+Makefile to build, clean and make distribution.
+
+README
+This file. Contains information about all files in \
+submission.
+
+
+CHALLENGES FACED:
+
+Main challenge faced was to try and understand what \
+details the spec actually wanted me to provide.
+
+It was particularly hard to understand what kind of \
+logical block offsets would exist for indirect tables.
