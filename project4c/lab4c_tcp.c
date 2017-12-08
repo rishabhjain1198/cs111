@@ -7,6 +7,7 @@
 //HENCE, FORCED TO MAKE AN ASSUMPTION.
 //ASSUMING THAT COMMANDS SHOULD NEVER BE OUTPUTTED TO STDOUT.
 
+#include<unistd.h>
 #include <getopt.h>
 #include <string.h>
 #include <stdio.h>
@@ -19,7 +20,10 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <math.h>
-#include<unistd.h>
+#include<netdb.h>
+#include<netinet/in.h>
+#include<fcntl.h>
+
 
 int ignoreReading = 0;
 long periodAmount = 1;
@@ -32,7 +36,14 @@ int true = 1;
 int generateReports = 1;
 
 mraa_aio_context sensVar;
-mraa_gpio_context butVar;
+
+int portNumber = -1;
+
+char *uid;
+int uidGiven = 0;
+
+char *hostName;
+int hostGiven = 0;
 
 char *logFileName;
 
@@ -49,7 +60,7 @@ void turnOff(){
     char time[20];
     myTime(time);
 
-    fprintf(stdout, "%s %s\n", time, "SHUTDOWN");
+    fprintf(stderr, "%s %s\n", time, "SHUTDOWN");
 
     if(loggingEnabled)	{
 	fprintf(logFile, "%s\n", "OFF");
@@ -110,24 +121,24 @@ float properTemp(int a){
     return temperature;
 }
 
-void * readButton(){
-    while(true){
-        int reading = mraa_gpio_read(butVar);
-        if(reading){
-            char time[20];
-            myTime(time);
-            if(loggingEnabled) fprintf(logFile, "%s %s\n", time, "SHUTDOWN");
-            exit(0);
-        }
-    }
-    
-    return NULL;
+float randomRead()    {
+    float min = 15.0;
+    float max = 30.0;
+    float scale = rand() / (float) RAND_MAX;
+    return min + scale * (max - min);
 }
 
 void * logTemperature(){
     while (true) {
 	if(generateReports){
+        
         float temp = properTemp(mraa_aio_read(sensVar));
+
+        //float temp = randomRead();
+        
+        
+        
+        
         if(scale == 'F')
             temp = temp*1.8 + 32.0;
         
@@ -135,9 +146,11 @@ void * logTemperature(){
         
         myTime(time);
         
-        if(loggingToggle && loggingEnabled) fprintf(logFile, "%s %.1f\n", time, temp);
+        if(loggingToggle && loggingEnabled) {
+            fprintf(logFile, "%s %.1f\n", time, temp);
+        }
         
-        if (loggingToggle) fprintf(stdout, "%s %.1f \n", time, temp);
+        if (loggingToggle) fprintf(stderr, "%s %.1f\n", time, temp);
         
         if(!ignoreReading) ignoreReading=1; //only once
         
@@ -188,10 +201,12 @@ int main(int argc, char **argv){
         {"period", required_argument, 0, 'p'},
         {"scale", required_argument, 0, 's'},
         {"log", required_argument, 0, 'l'},
+        {"id", required_argument, 0, 'i'},
+        {"host", required_argument, 0, 'h'},
         {0, 0, 0, 0}
     };
     int opt;
-    while((opt = getopt_long(argc, argv, "p:s:l:", long_options, NULL)) != -1) {
+    while((opt = getopt_long(argc, argv, "p:s:l:i:h:", long_options, NULL)) != -1) {
         switch(opt) {
             case 'p':
                 periodAmount = atoi(optarg);
@@ -210,30 +225,119 @@ int main(int argc, char **argv){
                 logFileName = optarg;
                 loggingEnabled = 1;
                 break;
+            case 'i':
+                uid = optarg;
+                uidGiven = 1;
+                break;
+            case 'h':
+                hostName = optarg;
+                hostGiven = 1;
+                break;
             default:
                 fprintf(stderr, "Please enter valid argument!\n");
                 exit(1);
         }
     }
     
-    if(loggingEnabled)
+    int breakCode = 0;
+    
+    if(!hostGiven)  {
+        fprintf(stderr, "Please enter host number!\n");
+        exit(1);
+    }
+    
+    if(!uidGiven)    {
+        fprintf(stderr, "Please enter UID!\n");
+        exit(1);
+    }
+    
+    if(!loggingEnabled) {
+        fprintf(stderr, "Please give log file name!\n");
+        exit(1);
+    }
+    
+    int index = optind;
+    for(index = optind; index < argc; index++)  {
+        if(breakCode)   {
+            fprintf(stderr, "Please enter valid arguments!\n");
+            exit(1);
+        }
+        //fprintf(stderr, "YELLO %s\n", argv[index]);
+        portNumber = atoi(argv[index]);
+        breakCode = 1;
+    }
+    
+    if(portNumber == -1)    {
+        fprintf(stderr, "Please enter valid port number!\n");
+        exit(1);
+    }
+    
+    //OPENING TCP CONNECTION
+    
+
+    int sockfd;
+    struct sockaddr_in serv_addr;
+    struct hostent *server;
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if(sockfd < 0)  {
+        fprintf(stderr, "ERROR OPENING SOCKET\n");
+        exit(1);
+    }
+    server = gethostbyname(hostName);
+    if (server == NULL) {
+        fprintf(stderr,"ERROR, no such host\n");
+        exit(1);
+    }
+
+    serv_addr.sin_family = AF_INET;
+    bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
+    serv_addr.sin_port = htons(portNumber);
+
+    if (connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
+        perror("ERROR connecting");
+        exit(1);
+    }
+
+    if(loggingEnabled)  {
         logFile = fopen(logFileName, "a");
-     
+        if(logFile == NULL) {
+            fprintf(stderr, "ERROR IN OPENING LOG FILE: %s\n", strerror(errno));
+            exit(1);
+        }
+
+
+    }
+
+    dup2(sockfd, 2);
+    dup2(sockfd, 0);
+    
+    char logUid[80] = "";
+    strcat(logUid, "ID=");
+    strcat(logUid, uid);
+    strcat(logUid, "\n");
+    
+    fprintf(stderr, "%s", logUid);
+    fprintf(logFile, "%s", logUid);
+   
+    
+    
+    
+    
+    //TCP WORK DONE
+
+    
+
     sensVar = mraa_aio_init(1);
-    butVar = mraa_gpio_init(73);
- if(!butVar) {fprintf(stderr, "BUTTON NOT FOUND\n"); exit(1);}
 
 if(!sensVar) {fprintf(stderr, "SENSOR NOT WORKING\n"); exit(1); }
 
-    pthread_t *threads = malloc(3 * sizeof(pthread_t));
+    pthread_t *threads = malloc(2 * sizeof(pthread_t));
 
     pthread_create(threads, NULL, logTemperature, NULL);
-    pthread_create(threads+1, NULL, readButton, NULL);
-    pthread_create(threads+2, NULL, readInput, NULL);
+    pthread_create(threads+1, NULL, readInput, NULL);
    
     pthread_join(*(threads), NULL);
     pthread_join(*(threads+1), NULL);
-    pthread_join(*(threads+2), NULL);
        
     free(threads);
     
@@ -241,7 +345,6 @@ if(!sensVar) {fprintf(stderr, "SENSOR NOT WORKING\n"); exit(1); }
         fclose(logFile);
   
     mraa_aio_close(sensVar);
-    mraa_gpio_close(butVar);
 
     return 0;
 }

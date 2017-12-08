@@ -1,0 +1,25 @@
+NAME: RISHABH JAIN
+EMAIL: rishabhjain@ucla.edu
+ID:	604817863
+
+FILES INCLUDED:
+
+lab4c_tcp.c 
+Source file to log temperature from sensor and log to and receive commands 
+from TCP server.
+
+lab4c_tls.c
+Source file to log temperature from sensor and log to and receive commands
+from server using SSL/TLS.
+
+Makefile
+Makefile with targets build check dist and clean to handle source files.
+
+README
+This file, contains info about all files.
+
+
+DIFFICULTIES
+There is very little documentation about the Beaglebone Green Wireless platform,
+and it refuses to work nicely with MacOS. Midway through the project, my Beaglebone 
+just stopped working over USB. 
