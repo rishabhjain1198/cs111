@@ -318,9 +318,6 @@ int main(int argc, char **argv){
 
     
     OpenSSL_add_all_algorithms();
-    ERR_load_BIO_strings();
-    ERR_load_crypto_strings();
-    SSL_load_error_strings();
 
     if(SSL_library_init() < 0)  {
         fprintf(stderr, "Could not initialize the OpenSSL library !\n");
